@@ -500,3 +500,8 @@ Yes—an abstract class can have a main method. Since main is static, it doesn�
     -Why it works: static methods aren’t tied to an instance, so even though you can’t instantiate AbstractDemo, the JVM can still call AbstractDemo.main(...).
 
     - Key point: Only the exact signature public static void main(String[] args) is used by the JVM as the program entry.
+
+# Question 12: Can the constructor be inherited?
+# Solution: 
+No, we can't inherit a constructor.
+
