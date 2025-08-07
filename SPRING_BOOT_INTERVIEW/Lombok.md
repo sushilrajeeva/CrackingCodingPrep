@@ -23,14 +23,14 @@
     
     For example, instead of new User('john', 'email', 'password', true, 'ADMIN') where parameter order matters, I can write:
 
-    ```Java
-        User user = User.builder()
-            .username('john')
-            .email('email@test.com')
-            .isActive(true)
-            .role('ADMIN')
-            .build();
-    ```
+```Java
+    User user = User.builder()
+        .username('john')
+        .email('email@test.com')
+        .isActive(true)
+        .role('ADMIN')
+        .build();
+```
 
     The benefits are readability - code reads like English, flexibility - can specify fields in any order and skip optional ones, and immutability - the built object can be immutable. @Builder is particularly useful for objects with many optional parameters or when creating test data with different combinations of fields.
 
@@ -52,80 +52,80 @@
 
     Instead of multiple @Autowired annotations, I declare dependencies as final fields and let Lombok generate the constructor. Spring automatically detects the constructor and injects dependencies.
 
-    ```Java
-        @Service
-        @RequiredArgsConstructor
-        public class UserService {
-            private final UserRepository userRepository;
-            private final EmailService emailService;
-            // Lombok generates constructor, Spring injects dependencies
-        }
-    ```
+```Java
+    @Service
+    @RequiredArgsConstructor
+    public class UserService {
+        private final UserRepository userRepository;
+        private final EmailService emailService;
+        // Lombok generates constructor, Spring injects dependencies
+    }
+```
 
     This approach is better than field injection because dependencies are immutable, explicit, and easily testable. The constructor clearly shows what the service needs, making the code self-documenting.
 
 # Question 6: Can you walk through a complete CRUD operation showing Entity, DTO, and Builder usage?
 # Solution:
 
-    ```Java
-        // Entity
-        @Entity
-        @Builder
-        @Data // = @Getter + @Setter + @ToString + @EqualsAndHashCode + @RequiredArgsConstructor
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public class UserEntity {
-            @Id @GeneratedValue
-            private Long id;
-            private String username;
-            private String email;
-            private String password;  // Sensitive - don't expose
-        }
+```Java
+    // Entity
+    @Entity
+    @Builder
+    @Data // = @Getter + @Setter + @ToString + @EqualsAndHashCode + @RequiredArgsConstructor
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public class UserEntity {
+        @Id @GeneratedValue
+        private Long id;
+        private String username;
+        private String email;
+        private String password;  // Sensitive - don't expose
+    }
 
-        // Request DTO
-        @Builder
-        @Data
-        public class CreateUserRequest {
-            @NotBlank
-            private String username;
-            @Email
-            private String email;
-            private String password;
-        }
+    // Request DTO
+    @Builder
+    @Data
+    public class CreateUserRequest {
+        @NotBlank
+        private String username;
+        @Email
+        private String email;
+        private String password;
+    }
 
-        // Response DTO
-        @Builder
-        @Data
-        public class UserResponse {
-            private Long id;
-            private String username;
-            private String email;
-            // No password - security
-        }
+    // Response DTO
+    @Builder
+    @Data
+    public class UserResponse {
+        private Long id;
+        private String username;
+        private String email;
+        // No password - security
+    }
 
-        // Service
-        @Service
-        @RequiredArgsConstructor
-        public class UserService {
-            private final UserRepository repository;
-            
-            public UserResponse createUser(CreateUserRequest request) {
-                UserEntity entity = UserEntity.builder()
-                    .username(request.getUsername())
-                    .email(request.getEmail())
-                    .password(encode(request.getPassword()))
-                    .build();
-                    
-                UserEntity saved = repository.save(entity);
+    // Service
+    @Service
+    @RequiredArgsConstructor
+    public class UserService {
+        private final UserRepository repository;
+        
+        public UserResponse createUser(CreateUserRequest request) {
+            UserEntity entity = UserEntity.builder()
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .password(encode(request.getPassword()))
+                .build();
                 
-                return UserResponse.builder()
-                    .id(saved.getId())
-                    .username(saved.getUsername())
-                    .email(saved.getEmail())
-                    .build();
-            }
+            UserEntity saved = repository.save(entity);
+            
+            return UserResponse.builder()
+                .id(saved.getId())
+                .username(saved.getUsername())
+                .email(saved.getEmail())
+                .build();
         }
-    ```
+    }
+```
     
 # Question 7: What are some Lombok annotations you commonly use and their purposes?
 # Solution:
@@ -144,28 +144,28 @@
 # Solution:
     I use Bean Validation annotations on DTO fields and @Valid in controller methods:
 
-    ```Java
-        @Builder
-        @Data
-        public class CreateUserRequest {
-            @NotBlank(message = 'Username is required')
-            @Size(min = 3, max = 50)
-            private String username;
-            
-            @Email(message = 'Invalid email format')
-            @NotBlank
-            private String email;
-            
-            @Size(min = 8, message = 'Password must be at least 8 characters')
-            private String password;
-        }
+```Java
+    @Builder
+    @Data
+    public class CreateUserRequest {
+        @NotBlank(message = 'Username is required')
+        @Size(min = 3, max = 50)
+        private String username;
+        
+        @Email(message = 'Invalid email format')
+        @NotBlank
+        private String email;
+        
+        @Size(min = 8, message = 'Password must be at least 8 characters')
+        private String password;
+    }
 
-        @PostMapping('/users')
-        public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
-            // Spring automatically validates and returns 400 if invalid
-            return ResponseEntity.ok(userService.createUser(request));
-        }
-    ```
+    @PostMapping('/users')
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
+        // Spring automatically validates and returns 400 if invalid
+        return ResponseEntity.ok(userService.createUser(request));
+    }
+```
 
     This approach separates validation rules from business logic, provides clear error messages, and works automatically with Spring's validation framework. Different DTOs can have different validation rules for the same entity fields.
 
