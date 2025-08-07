@@ -228,3 +228,13 @@
     The trade-off is complexity - you must manually lock and unlock in try-finally blocks, while synchronized handles this automatically. I use ReentrantLock when I need the advanced features like timeouts or fairness, and synchronized for simple mutual exclusion where the automatic lock management is preferred.
 
     Common pitfall is forgetting to unlock or not using try-finally, which can cause deadlocks. Always unlock in finally block to ensure proper cleanup even when exceptions occur
+
+# Question 12: Explain Stack and Heap memory area in Java.
+# Solution:
+    Java has two main memory areas: Stack and Heap. Stack stores method local variables - primitives go directly in stack, while object references go in stack but point to actual objects in heap.
+
+    The confusing part is Strings. String literals like 'Hello' go to String Pool, a special area in heap where identical strings are shared. Multiple variables pointing to 'Hello' literal reference the same object. But new String('Hello') creates separate objects in regular heap.
+
+    Primitives are fast because they're directly in stack and automatically cleaned when methods end. Objects require garbage collection when no references exist. String Pool optimizes memory by reusing identical string literals, but can also cause memory leaks if too many unique strings are created.
+
+    The key insight is understanding reference vs object - variables in methods store either primitive values directly or references pointing to heap objects. This affects performance, memory usage, and equality comparisons.
