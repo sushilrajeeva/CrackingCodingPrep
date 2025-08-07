@@ -188,22 +188,22 @@
 
     - First, identify all @Autowired fields and convert them to final fields. Add @RequiredArgsConstructor to the class or manually create the constructor.
 
-    ```Java
-        // Before
-        @Service
-        public class LegacyService {
-            @Autowired private RepoA repoA;
-            @Autowired private RepoB repoB;
-        }
+```Java
+    // Before
+    @Service
+    public class LegacyService {
+        @Autowired private RepoA repoA;
+        @Autowired private RepoB repoB;
+    }
 
-        // After
-        @Service
-        @RequiredArgsConstructor
-        public class ModernService {
-            private final RepoA repoA;
-            private final RepoB repoB;
-        }
-    ```
+    // After
+    @Service
+    @RequiredArgsConstructor
+    public class ModernService {
+        private final RepoA repoA;
+        private final RepoB repoB;
+    }
+```
 
     - Then update unit tests to use constructor instead of reflection. Remove any @Autowired annotations and Spring test dependencies for unit tests.
 
