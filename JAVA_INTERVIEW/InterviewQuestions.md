@@ -17,24 +17,24 @@
 # Solution:
     Lambda expressions enable functional programming in Java by allowing you to write anonymous functions concisely.
 
-    ```Java
-        // Before Java 8
-        List<String> names = Arrays.asList("Bob", "Alice", "Charlie");
+```Java
+    // Before Java 8
+    List<String> names = Arrays.asList("Bob", "Alice", "Charlie");
 
-        // Before Java 8 - lots of code for simple sorting
-        Collections.sort(names, new Comparator<String>() {
-            @Override
-            public int compare(String s1, String s2) {
-                return s1.compareTo(s2);
-            }
-        });
+    // Before Java 8 - lots of code for simple sorting
+    Collections.sort(names, new Comparator<String>() {
+        @Override
+        public int compare(String s1, String s2) {
+            return s1.compareTo(s2);
+        }
+    });
 
-        // Java 8 - clean and simple
-        Collections.sort(names, (s1, s2) -> s1.compareTo(s2));
+    // Java 8 - clean and simple
+    Collections.sort(names, (s1, s2) -> s1.compareTo(s2));
 
-        // Even simpler
-        Collections.sort(names, String::compareTo);
-    ```
+    // Even simpler
+    Collections.sort(names, String::compareTo);
+```
 
 # Question 4. What is Optional Class?
 # Solution:
@@ -46,21 +46,21 @@
     
     I use it primarily for return types in methods that might not find data - like repository lookups or config retrievals. It makes the API contract clear and forces callers to handle the 'not found' case explicitly. The code becomes more self-documenting and safer.
 
-    ```Java
-        // Optional is generic - the <T> indicates it can hold any type
-        Optional<String> optionalString = Optional.of("Hello");
-        Optional<Integer> optionalInt = Optional.of(42);
-        Optional<User> optionalUser = Optional.empty();
+```Java
+    // Optional is generic - the <T> indicates it can hold any type
+    Optional<String> optionalString = Optional.of("Hello");
+    Optional<Integer> optionalInt = Optional.of(42);
+    Optional<User> optionalUser = Optional.empty();
 
-        // Usage:
-        public Optional<String> getConfigValue(String key) {
-            return Optional.ofNullable(properties.getProperty(key));
-        }
+    // Usage:
+    public Optional<String> getConfigValue(String key) {
+        return Optional.ofNullable(properties.getProperty(key));
+    }
 
-        // Usage
-        String timeout = getConfigValue("timeout")
-            .orElse("30");
-    ```
+    // Usage
+    String timeout = getConfigValue("timeout")
+        .orElse("30");
+```
 
 # Question 5. How do lambda expressions differ from anonymous classes?
 # Solution:
@@ -133,28 +133,28 @@
     
     This lock-free approach is faster than synchronized blocks because threads don't wait - they immediately retry. The hardware CAS instruction ensures atomicity, and the retry loop ensures progress without data loss
 
-    ```Java
-        import java.util.concurrent.atomic.AtomicInteger;
+```Java
+    import java.util.concurrent.atomic.AtomicInteger;
 
-        public class AtomicSolution {
-        private AtomicInteger counter = new AtomicInteger(0);  // Atomic operations!
+    public class AtomicSolution {
+    private AtomicInteger counter = new AtomicInteger(0);  // Atomic operations!
 
-        public void increment() {
-            counter.incrementAndGet();  // Single atomic operation - no interference possible
-        }
+    public void increment() {
+        counter.incrementAndGet();  // Single atomic operation - no interference possible
+    }
 
-        public int getValue() {
-            return counter.get();       // Always gets current value
-        }
+    public int getValue() {
+        return counter.get();       // Always gets current value
+    }
 
-        // Other atomic operations
-        public void example() {
-            counter.addAndGet(5);           // Add 5 atomically
-            counter.compareAndSet(10, 20);  // If value is 10, set to 20
-            int old = counter.getAndSet(0); // Get current, then set to 0
-        }
-        }
-    ```
+    // Other atomic operations
+    public void example() {
+        counter.addAndGet(5);           // Add 5 atomically
+        counter.compareAndSet(10, 20);  // If value is 10, set to 20
+        int old = counter.getAndSet(0); // Get current, then set to 0
+    }
+    }
+```
 
 
 # Question 9: What is Synchronized in java and how does it ensure thread safety?
@@ -169,37 +169,37 @@
     
     Key pitfall is deadlock risk when using multiple locks - always acquire locks in consistent order to avoid it.
 
-    ```Java
-        public class SynchronizedTypes {
-            private int instanceVar = 0;
-            private static int staticVar = 0;
-            
-            // 1. Synchronized method - uses 'this' as lock
-            public synchronized void method1() {
-                instanceVar++; // Lock: this object
-            }
-            
-            // 2. Synchronized static method - uses Class object as lock
-            public static synchronized void staticMethod() {
-                staticVar++; // Lock: SynchronizedTypes.class
-            }
-            
-            // 3. Synchronized block - custom lock object
-            public void method3() {
-                synchronized(this) {
-                    instanceVar++; // Same as synchronized method
-                }
-            }
-            
-            // 4. Synchronized with custom object
-            private final Object customLock = new Object();
-            public void method4() {
-                synchronized(customLock) {
-                    instanceVar++; // Lock: customLock object
-                }
+```Java
+    public class SynchronizedTypes {
+        private int instanceVar = 0;
+        private static int staticVar = 0;
+        
+        // 1. Synchronized method - uses 'this' as lock
+        public synchronized void method1() {
+            instanceVar++; // Lock: this object
+        }
+        
+        // 2. Synchronized static method - uses Class object as lock
+        public static synchronized void staticMethod() {
+            staticVar++; // Lock: SynchronizedTypes.class
+        }
+        
+        // 3. Synchronized block - custom lock object
+        public void method3() {
+            synchronized(this) {
+                instanceVar++; // Same as synchronized method
             }
         }
-    ```
+        
+        // 4. Synchronized with custom object
+        private final Object customLock = new Object();
+        public void method4() {
+            synchronized(customLock) {
+                instanceVar++; // Lock: customLock object
+            }
+        }
+    }
+```
 
 # Quick Folloups
 ## a. "When do you use volatile?"
