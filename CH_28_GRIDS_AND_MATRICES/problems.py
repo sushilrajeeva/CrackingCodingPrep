@@ -277,3 +277,74 @@ grid = [
 helper.helper.newProblem("Problem 28.7 SUBGRID SUMS")
 print("Given matrix", grid)
 print("Subgrid sums =", subgrid_sums(grid))
+
+
+
+""" Leetcode 54. Spiral Matrix
+
+    Given an m x n matrix, return all elements of the matrix in spiral order.
+
+    Example 1: matrix = [
+                        [1,2,3],
+                        [4,5,6],
+                        [7,8,9]
+                    ]
+
+    Output: [1,2,3,6,9,8,7,4,5]
+
+    Example 2: matrix = [
+                            [1,2,3,4],
+                            [5,6,7,8],
+                            [9,10,11,12]
+                        ]
+    Output: [1,2,3,4,8,12,11,10,9,5,6,7]
+
+"""
+
+def spiral_order(matrix: List[List[int]]) -> List[int]:
+    if not matrix or not matrix[0]:
+        return []
+    
+    m: int = len(matrix)
+    n: int = len(matrix[0])
+
+    top: int = 0
+    bottom: int = m - 1
+
+    left: int = 0
+    right: int = n - 1
+
+    res: List[int] = []
+
+    while top <= bottom and left <= right:
+
+        # 1) Traverse from left → right along the top row
+        for col in range(left, right + 1):
+            res.append(matrix[top][col])
+        top += 1 # moving down the boundry
+
+        # 2) Traverse from top → bottom along the right column
+        for row in range(top, bottom + 1):
+            res.append(matrix[row][right])
+        right -= 1
+
+        # 3) If there’s still a bottom row, traverse right → left
+        if left <= right:
+            for col in range(right, left - 1, -1):
+                res.append(matrix[bottom][col])
+            bottom -= 1
+
+        # 4) If there’s still a left column, traverse bottom → top (if it still exist)
+        if top <= bottom:
+            for row in range(bottom, top - 1, -1):
+                res.append(matrix[row][left])
+            left += 1
+
+    return res
+            
+
+
+helper.helper.newProblem("Leetcode 54. Spiral Matrix")
+mat = [[1,2,3],[4,5,6],[7,8,9]]
+print("Given matrix", mat)
+print("Spiral order of the matrix =", spiral_order(mat))
