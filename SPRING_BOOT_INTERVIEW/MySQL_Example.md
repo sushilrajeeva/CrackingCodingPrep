@@ -426,3 +426,12 @@ public class UserController {
     }
 }
 ```
+
+# 10. API Endpoints:
+```bash
+GET    /api/users      # Get all users
+GET    /api/users/{id} # Get user by ID
+POST   /api/users      # Create new user
+PUT    /api/users/{id} # Update user
+DELETE /api/users/{id} # Delete user
+```
