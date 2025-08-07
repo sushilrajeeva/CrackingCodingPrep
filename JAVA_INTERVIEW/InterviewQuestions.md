@@ -238,3 +238,17 @@
     Primitives are fast because they're directly in stack and automatically cleaned when methods end. Objects require garbage collection when no references exist. String Pool optimizes memory by reusing identical string literals, but can also cause memory leaks if too many unique strings are created.
 
     The key insight is understanding reference vs object - variables in methods store either primitive values directly or references pointing to heap objects. This affects performance, memory usage, and equality comparisons.
+
+# Question 13: s it possible to make an array volatile?
+# Solution:
+
+    You cannot make array elements volatile in Java, only the array reference itself. When you declare 'volatile int[] array', the reference to the array is volatile, meaning assignment of a new array is immediately visible to all threads. However, modifications to individual array elements are not volatile.
+    
+    For example, 'array = new int[]{1,2,3}' is thread-safe and immediately visible, but 'array[0] = 100' is not guaranteed to be visible to other threads because individual elements don't have volatile semantics.
+    
+    To achieve thread-safety for array elements, you need additional mechanisms: synchronized blocks for coordination, AtomicIntegerArray for lock-free operations, concurrent collections like CopyOnWriteArrayList, or the immutable array pattern where you replace the entire array instead of modifying elements.
+    
+    The key insight is that volatile only affects the reference itself, not the contents of the object it points to. This applies to all objects, not just arrays - volatile guarantees visibility of reference changes, but not changes to the object's internal state."
+    
+    Key message: volatile array reference = thread-safe array replacement, but not thread-safe element modification. Use AtomicArray or synchronization for element-level thread safety.
+
