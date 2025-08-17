@@ -94,3 +94,73 @@ In Spring Boot, ApplicationContext is automatically created and configured. It l
                                         classes = TestConfiguration.class))
     public class Application { }
 ```
+
+Spring Boot scans from the main application class package downwards. It looks for @Component, @Service, @Repository, @Controller annotations and creates beans automatically. The scanning happens during application startup, and discovered beans are registered in the ApplicationContext for dependency injection.
+
+# Question 4: How does Component Scanning work in Spring Boot?
+# Solution:
+    Spring supports three types of dependency injection:
+
+```Java
+    // 1. Constructor Injection (Recommended) (Can be simplified with lombok)
+    @Service
+    public class UserService {
+        private final UserRepository repository;
+        private final EmailService emailService;
+        
+        public UserService(UserRepository repository, EmailService emailService) {
+            this.repository = repository;
+            this.emailService = emailService;
+        }
+    }
+
+    // 2. Setter Injection
+    @Service
+    public class UserService {
+        private UserRepository repository;
+        
+        @Autowired
+        public void setRepository(UserRepository repository) {
+            this.repository = repository;
+        }
+    }
+
+    // 3. Field Injection (Not recommended)
+    @Service
+    public class UserService {
+        @Autowired
+        private UserRepository repository;
+    }
+```
+
+Constructor injection is recommended because it ensures immutable dependencies, makes dependencies explicit, enables easy unit testing without Spring context, catches circular dependencies at compile time, and guarantees objects are fully initialized.
+Field injection should be avoided as it creates mutable dependencies, requires reflection for testing, and hides complexity. Setter injection is useful for optional dependencies but makes objects mutable after construction
+
+# Question 5: What happens during Spring Boot application startup? Walk me through the process.
+# Solution:
+    Spring Boot application startup follows these key phases:
+
+```Java
+@SpringBootApplication
+// Equivalent to:
+// @SpringBootConfiguration  
+// @EnableAutoConfiguration
+// @ComponentScan
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+```
+
+    1. SpringApplication Creation: Creates SpringApplication instance and configures sources
+    2. Environment Preparation: Loads application.properties/yml, system properties, environment variables
+    3. ApplicationContext Creation: Creates appropriate context type (web/non-web)
+    4. Auto-Configuration: @EnableAutoConfiguration kicks in, analyzes classpath and configures beans automatically
+    5. Component Scanning: @ComponentScan discovers and registers beans from specified packages
+    6. Bean Instantiation: Creates singleton beans, resolves dependencies, performs dependency injection
+    7. Post-Processing: Applies BeanPostProcessors, initializes beans
+    8. Application Ready: Fires ApplicationReadyEvent, application is ready to serve requests
+
+    Each phase can be customized through ApplicationListeners, BeanPostProcessors, or custom auto-configurations. The entire process is driven by conventions and auto-configuration to minimize manual setup.
+

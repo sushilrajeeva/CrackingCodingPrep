@@ -239,7 +239,7 @@
 
     The key insight is understanding reference vs object - variables in methods store either primitive values directly or references pointing to heap objects. This affects performance, memory usage, and equality comparisons.
 
-# Question 13: s it possible to make an array volatile?
+# Question 13: is it possible to make an array volatile?
 # Solution:
 
     You cannot make array elements volatile in Java, only the array reference itself. When you declare 'volatile int[] array', the reference to the array is volatile, meaning assignment of a new array is immediately visible to all threads. However, modifications to individual array elements are not volatile.
@@ -252,3 +252,59 @@
     
     Key message: volatile array reference = thread-safe array replacement, but not thread-safe element modification. Use AtomicArray or synchronization for element-level thread safety.
 
+# Question 14: Difference between 'equals()' and '==' operator in Java.
+# Solution:
+    The == operator compares references (memory addresses) for objects and values for primitives. The equals() method compares the actual content or logical equality of objects.
+    
+    For primitives, == compares values directly. For objects, == checks if both references point to the same memory location, while equals() compares the meaningful content based on the class implementation
+
+# Question 15: How 'intern()' works?
+# Solution:
+    The intern() method returns a canonical representation of the string from the String Pool. When you call intern() on a string, it checks if an identical string already exists in the String Pool. If it exists, it returns the reference to the pooled string. If not, it adds the string to the pool and returns the reference.
+
+    This is useful for memory optimization when you have many duplicate strings, as it ensures only one copy exists in memory.
+
+```Java
+public class InternDemo {
+    public static void main(String[] args) {
+        // String literals automatically go to pool
+        String s1 = "Hello";
+        String s2 = "Hello";
+        System.out.println(s1 == s2); // true - same pool reference
+        
+        // String objects created in heap
+        String s3 = new String("Hello");
+        String s4 = new String("Hello");
+        System.out.println(s3 == s4); // false - different heap objects
+        System.out.println(s1 == s3); // false - pool vs heap
+        
+        // Using intern() to get pool reference
+        String s5 = s3.intern(); // Returns reference from pool
+        String s6 = s4.intern(); // Returns same reference from pool
+        
+        System.out.println(s1 == s5); // true - both from pool
+        System.out.println(s5 == s6); // true - same pool reference
+        System.out.println(s3 == s5); // false - heap vs pool
+        
+        // Creating new string not in pool
+        String s7 = new String("World");
+        String s8 = s7.intern(); // Adds "World" to pool and returns reference
+        String s9 = "World";     // Gets existing reference from pool
+        
+        System.out.println(s7 == s8); // false - heap vs pool
+        System.out.println(s8 == s9); // true - both from pool
+        
+        // Demonstrating memory efficiency
+        String[] duplicates = new String[1000];
+        for (int i = 0; i < 1000; i++) {
+            duplicates[i] = new String("Duplicate").intern(); // All point to same pool object
+        }
+        // Without intern(), we'd have 1000 separate objects
+        // With intern(), we have 1000 references to 1 pool object
+    }
+}
+```
+
+# Question 15: Is Java pass by value or pass by reference?
+# Solution:
+Java is always pass-by-value. There is no pass-by-reference in Java. What varies is what value gets copied
